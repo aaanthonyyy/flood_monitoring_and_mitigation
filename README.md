@@ -1,4 +1,4 @@
-# flood_monitoring_and_mitigation
+# Flood Monitoring and Mitigation
 ECNG 2006 Group Project | GROUP P4 - Flood Monitoring and Mitigation
 
 Course Code: ECNG 2006 Intoduction to Microprocessors
