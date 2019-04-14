@@ -1,14 +1,14 @@
 		include <p16f877.inc>
 		list p=16f877
 
-turbHi	EQU		0x20
-turbLo	EQU		0x21
+turbHi		EQU		0x20
+turbLo		EQU		0x21
 RegA		EQU		0x22
 RegB		EQU		0x23
 cnt		EQU		0x24
-BCDhi	EQU		0x25
-BCDlo	EQU		0x26
-BCDup	EQU		0x27
+BCDhi		EQU		0x25
+BCDlo		EQU		0x26
+BCDup		EQU		0x27
 temp		EQU		0x28
 
 		ORG		0x00
@@ -34,13 +34,13 @@ main
 ;--------------------------------------------------
 
 WLSensor
-		btfsc	PORTB,RB2
+		btfsc		PORTB,RB2
 		bsf		PORTB,RB1
 		bcf		PORTB,RB1
 		return
 
 ;--------------------------------------------------
-;				Turbidity Sensor
+;		Turbidity Sensor
 ;--------------------------------------------------
 
 turbsens
@@ -53,43 +53,43 @@ turbsens
 		call		ADConversion
 
 adc_config
-		banksel	ADCON1
-		movlw	B'10000000'
-		movwf	ADCON1
+		banksel		ADCON1
+		movlw		B'10000000'
+		movwf		ADCON1
 
-		banksel	ADCON0
-		movlw	B'01000101'		;put 01000101 in ADCON0 (channel 1/AN0)	
-		movwf	ADCON0
+		banksel		ADCON0
+		movlw		B'01000101'		;put 01000101 in ADCON0 (channel 1/AN0)	
+		movwf		ADCON0
 		return		
 
 
 ADConversion
-		btfsc	ADCON0,GO
+		btfsc		ADCON0,GO
 		goto		ADConversion
 		
 		bcf		STATUS,RP0
 		movf		ADRESH,W		
-		movwf 	turbHi		
+		movwf 		turbHi		
 		bsf 		STATUS,RP0
 
 		movf		ADRESL,W
 		bcf		STATUS,RP0
-        	movwf	turbLo
+        	movwf		turbLo
 
 			
  
       	       	
 dly40
-		movlw	D'20'
-		movwf	RegA
-
-dly		decfsz	RegA,F
+		movlw		D'20'
+		movwf		RegA
+	
+dly		decfsz		RegA,F
 		goto		dly
 		return
 
 
 ;--------------------------------------------
-;			BCD Conversion
+;		BCD Conversion
 ;--------------------------------------------
 bin2bcd
 		call		bcd_config
@@ -98,14 +98,14 @@ bin2bcd
 		
 
 bcd_config
-		banksel	TRISD
+		banksel		TRISD
 		clrf		TRISD		
 		bcf		TRISB,RB5
 		bcf		TRISB,RB4
 		bcf		TRISB,RB2
 		bcf		TRISB,RB1
 		
-		banksel	PORTD
+		banksel		PORTD
 		return
 
 ;-----------------------------------------------------
@@ -114,8 +114,8 @@ configBCD
 		clrf		BCDlo		;clearing BCD register that will hold the converted number
 		clrf		BCDhi		;"		"		"		"	
 
-		movlw	D'16'
-		movwf	cnt	
+		movlw		D'16'
+		movwf		cnt	
 		
 		bcf		STATUS,C	; clear carry flag since the rlf instruction affects the carry flag
 		goto		convert
@@ -125,31 +125,31 @@ shift
 		rlf		BCDlo,F
 		rlf		BCDhi,F
 		
-		decfsz	cnt,F
+		decfsz		cnt,F
 		goto		convert
 ;		goto		extract
 		
 		
 convert
-		movlw	0x33
-		addwf	BCDlo,F
+		movlw		0x33
+		addwf		BCDlo,F
+	
+		btfsc		BCDlo,3
+		andlw		0xF0
+	
+		btfsc		BCDlo,7
+		andlw		0x0F
+	
+		subwf		BCDlo,F
 
-		btfsc	BCDlo,3
-		andlw	0xF0
 
-		btfsc	BCDlo,7
-		andlw	0x0F
-
-		subwf	BCDlo,F
-
-
-		movlw	0x33
-		addwf	BCDhi,F
-		btfsc	BCDhi,3
-		andlw	0xF0
-		btfsc	BCDhi,7
-		andlw	0x0F
-		subwf	BCDhi,F
+		movlw		0x33
+		addwf		BCDhi,F
+		btfsc		BCDhi,3
+		andlw		0xF0
+		btfsc		BCDhi,7
+		andlw		0x0F
+		subwf		BCDhi,F
 
 		rlf		turbLo,F
 		rlf		turbHi,F
@@ -158,20 +158,20 @@ convert
 		rlf		BCDhi,F
 		rlf		BCDup
 
-		decfsz	cnt,F
+		decfsz		cnt,F
 		goto		convert
 		;goto		BCDdigits
 
 BCDdigits
 		movf		BCDlo,W
-		andlw	0xF0
-;		andlw	BCDlo
-		movwf	BCDup
-		swapf	BCDup
-
+		andlw		0xF0
+;		andlw		BCDlo
+		movwf		BCDup
+		swapf		BCDup
+	
 		movf		BCDlo,W
-		andlw	0x0F
-		movwf	BCDlo
+		andlw		0x0F
+		movwf		BCDlo
 
 		return
 
@@ -182,11 +182,11 @@ BCDdigits
 NTU_reading
 		movf		turbLo,W
 		call		LkUpLo
-		movwf	turbLo
+		movwf		turbLo
 
 		movf		turbHi,W
 		call		LkUpHi
-		movwf	turbHi
+		movwf		turbHi
 
 		return
 
@@ -200,33 +200,33 @@ bcd_test
 		bcf		PORTB,RB1
 
 		
-		;call	sseg_bcd
+		;call		sseg_bcd
 		
 		movf		BCDhi,W
 		call		bcd_lkup
-		movwf	PORTD
+		movwf		PORTD
 		bsf		PORTB,RB5
 		call		mux_delay
 		bcf		PORTB,RB5
 	
 		movf		BCDup,W
 		call		bcd_lkup
-		movwf	PORTD
+		movwf		PORTD
 		bsf		PORTB,RB4
 		call		mux_delay
 		bcf		PORTB,RB4
 
 		movf		BCDlo,W
 		call		bcd_lkup
-		movwf	PORTD
+		movwf		PORTD
 		bsf		PORTD,0
 		bsf		PORTB,RB2
 		call		mux_delay
 		bcf		PORTB,RB2
 
-		movlw	0x01
+		movlw		0x01
 		call		bcd_lkup
-		movwf	PORTD
+		movwf		PORTD
 		bsf		PORTB,RB1
 		call		mux_delay
 		bcf		PORTB,RB1
@@ -234,30 +234,30 @@ bcd_test
 		goto		bcd_test
 		
 mux_delay	
-		movlw 	0xF9
-		movwf 	RegA
-		movwf 	RegB
-	
-dly1	
-		decfsz 	RegA
-		goto 	dly1
-	
-dly2	
-		decfsz 	RegB
-		goto 	dly2
-		return
-	
-	
-sseg_bcd
-		movlw	0x0F
-		andwf	ADRESL
+		movlw 		0xF9
+		movwf 		RegA
+		movwf 		RegB
+		
+dly1		
+		decfsz 		RegA
+		goto 		dly1
+		
+dly2		
+		decfsz 		RegB
+		goto 		dly2
+		return	
+		
+		
+sseg_bcd	
+		movlw		0x0F
+		andwf		ADRESL
 		call		bcd_lkup
 		bsf		PORTB,RB5
 		call		mux_delay
 		bcf		PORTB,RB5
 	
-		movlw	0xF0
-		andwf	ADRESL
+		movlw		0xF0
+		andwf		ADRESL
 		call		bcd_lkup
 		bsf		PORTB,RB4
 		call		mux_delay
@@ -266,7 +266,7 @@ sseg_bcd
 		return
 ;------------------------------------
 bcd_lkup
-		addwf	PCL,F
+		addwf		PCL,F
 		retlw   	b'11111100' ;0
 		retlw   	b'00001100' ;1
 		retlw   	b'11011010' ;2
@@ -279,7 +279,7 @@ bcd_lkup
 		retlw   	b'11110110' ;9
 		retlw   	b'01101100' ;H	(A)
 		retlw   	b'00000010' ;-	(B)
-		retlw	b'00011100' ;L	(C)
+		retlw		b'00011100' ;L	(C)
 
 ;=======================================================
 ;				BCDlo lookup
