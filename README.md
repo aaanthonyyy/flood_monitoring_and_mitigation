@@ -57,3 +57,13 @@ response from the remote system.
 
 – Upon receipt of a response, the system should transmit the next reading, until all data
 has been sent.
+
+# System Overview
+
+![image](https://user-images.githubusercontent.com/43044255/121942943-0f576c80-cd1f-11eb-8a5a-1eea9cbe4936.png)
+
+
+# Hardware Implementation
+
+![image](https://user-images.githubusercontent.com/43044255/121943122-4037a180-cd1f-11eb-82cd-2d352f87187b.png)
+
